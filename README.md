@@ -1,0 +1,2 @@
+# Query-a-Digital-Music-Store-Database
+This project involves write query a digital music store database which holds information regarding the store’s media, employees, and customers, and use the pulled data to answer the questions that will help the store gain an understanding of the types of music that are purchased, where customers live, and how the company might optimize their business practices.
