@@ -1,0 +1,61 @@
+/*Query 1: which are the countries that have the most invoices?*/
+SELECT BillingCountry, COUNT(*) num_invoices
+FROM invoice
+GROUP BY BillingCountry
+ORDER BY num_invoices DESC;
+
+
+/*Query 2: which is the city that has the highest sum of invoice totals?*/
+WITH t1 AS(SELECT BillingCity , SUM(total) totals
+FROM invoice
+GROUP BY 1)
+
+SELECT BillingCity city, MAX(totals) total_invoices
+FROM t1;
+
+
+
+/*Query 3: Who is the highest spending customer ?*/
+WITH t1 AS(SELECT c.CustomerId,FirstName, LastName , SUM(i.total) total_invoice
+FROM Invoice i
+JOIN Customer c ON c.CustomerId = i.CustomerId 
+GROUP BY 1)
+
+SELECT CustomerId,FirstName, LastName , MAX(total_invoice) invoices
+FROM t1;
+
+
+
+/*Query 4: which are the customers who listen to Rock music?*/
+SELECT c.Email, c.FirstName,c.LastName,g.name
+FROM InvoiceLine il
+JOIN invoice i ON i.InvoiceId = il.InvoiceId
+JOIN Track t ON t.TrackId = il.TrackId
+JOIN Genre g ON g.GenreId = t.GenreId 
+JOIN Customer c ON c.CustomerId = i.CustomerId
+WHERE g.name like 'Rock' 
+GROUP BY c.FirstName,c.LastName,g.name
+ORDER BY 1 ;
+
+
+
+/*Query 5: who are the highest spending customers on music for each country?*/
+WITH t1 AS
+(
+SELECT c.CustomerId customer_id, c.FirstName first_name, c.LastName last_name, c.Country country, SUM(i.total) totals
+FROM Customer c
+JOIN Invoice i ON c.CustomerId = i.CustomerId 
+GROUP BY c.CustomerId
+)
+
+SELECT t1.*
+FROM t1
+JOIN(
+     SELECT country, MAX(totals)as total_spent, customer_id,  first_name, last_name
+     FROM t1 
+     GROUP BY country
+)t2
+ON t1.country = t2.country
+WHERE t1.totals = t2.total_spent
+ORDER BY country
+
